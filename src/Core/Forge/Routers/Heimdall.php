@@ -1,0 +1,340 @@
+<?php
+/**
+ * This routing class is meant to be used when you need to create quick and easy rest replies!
+ */
+
+namespace Core\Forge\Routers;
+
+class Heimdall {
+	public static $Routes = [];
+	public static $Params = [];
+
+	private static function prepareRoute($Route): string {
+		// Convert the route to a regular expression: escape forward slashes
+		$Route = preg_replace('/\//', '\\/', $Route);
+
+		// Convert variables e.g. {controller}
+		$Route = preg_replace('/\{([a-z]+)\}/', '(?P<\1>[a-z-]+)', $Route);
+
+		// Convert variables with custom regular expressions e.g. {id:\d+}
+		$Route = preg_replace('/\{([a-z]+):([^\}]+)\}/', '(?P<\1>\2)', $Route);
+
+		// Add start and end delimiters, and case-insensitive flag
+		$Route = '/^' . $Route . '$/i';
+
+		return $Route;
+	}
+
+	public static function add(string $Route, $Callback = false) : void {
+		$PreparedRoute = static::prepareRoute($Route);
+		static::$Routes[$PreparedRoute] = $Callback;
+	}
+
+	public static function get(string $Route, $Callback = false): void {
+		$PreparedRoute = static::prepareRoute($Route);
+
+		static::$Routes['get'][$PreparedRoute] = $Callback;
+	}
+
+	public static function post(string $Route, array $Callback = []): void {
+		$PreparedRoute = static::prepareRoute($Route);
+
+		static::$Routes['post'][$Route] = $Callback;
+	}
+
+	public static function getRoutes(): void {
+		var_dump(static::$Routes);
+	}
+
+	public static function match(string $URL, string $Method): bool {
+		// Iterate over the route as Route and its params
+		foreach (static::$Routes[$Method] as $Route => $Params) {
+			// If we have a route for the URL store it in matches
+			if (preg_match($Route, $URL, $Matches)) {
+				// Get named capture group values
+				foreach ($Matches as $Key => $Match) {
+					if (is_string($Key)) {
+						$Params[$Key] = $Match;
+					}
+				}
+
+				// Set the params and return true
+				static::$Params = $Params;
+				return true;
+			}
+		}
+		// Return false if no route is matched
+		return false;
+	}
+
+	public static function getParams() : void {
+		var_dump(static::$Params);
+	}
+	public static function getRequestMethod(): string {
+		return strtolower($_SERVER['REQUEST_METHOD']);
+	}
+
+	protected static function matchRoute($URL, $Method) {
+			// Iterate over the route as Route and its params
+			foreach (static::$Routes[$Method] as $Route => $Params) {
+				// If we have a route for the URL store it in matches
+				if (preg_match($Route, $URL, $Matches)) {
+					// Get named capture group values
+					foreach ($Matches as $Key => $Match) {
+						if (is_string($Key)) {
+							$Params[$Key] = $Match;
+						}
+					}
+
+					// Set the params and return true
+					static::$Params = $Params;
+					return true;
+				}
+			}
+			// Return false if no route is matched
+			return false;
+
+	}
+
+	/**
+	 * @throws \Exception
+	 */
+	public static function dispatch(string $URL): void {
+		$URL = static::removeQueryStringVariables($URL);
+		$Method = static::getRequestMethod();
+
+		// This action is performed whenever we need to match a route with action GET
+		if (static::match($URL, 'get') && $Method === "get") {
+			if (is_object(static::$Params)) {
+				if (is_callable(static::$Params)) {
+					call_user_func(static::$Params);
+				}
+			} else {
+				$Controller = static::$Params['controller'];
+				$Controller = static::convertToStudlyCaps($Controller);
+				$Controller = static::getNamespace() . $Controller;
+
+				if (class_exists($Controller)) {
+					$Controller_Object = new $Controller(static::$Params);
+
+					$Action = static::$Params['action'];
+					$Action = static::convertToCamelCase($Action);
+
+					if (is_callable([$Controller_Object, $Action])) {
+						$Controller_Object->$Action();
+
+					} else {
+						throw new \Exception("Method $Action (in controller $Controller) not found");
+					}
+				} else {
+					throw new \Exception("Controller class $Controller not found");
+				}
+			}
+		} elseif (static::match($URL, 'post') && $Method === "post") {
+			// Code for Post
+		} else {
+			throw new \Exception('No route matched.', 404);
+		}
+	}
+
+	/**
+	 * Convert the string with hyphens to StudlyCaps,
+	 * e.g. post-authors => PostAuthors
+	 *
+	 * @param string $String
+	 * @return string
+	 */
+	protected static function convertToStudlyCaps(string $String): string {
+		return str_replace(' ', '', ucwords(str_replace('-', ' ', $String)));
+	}
+
+	/**
+	 * Convert the string with hyphens to camelCase,
+	 * e.g. add-new => addNew
+	 *
+	 * @param string $String
+	 * @return string
+	 */
+	protected static function convertToCamelCase(string $String): string {
+		return lcfirst(static::convertToStudlyCaps($String));
+	}
+
+	/**
+	 * Remove the query string variables from the URL (if any). As the full
+	 * query string is used for the route, any variables at the end will need
+	 * to be removed before the route is matched to the routing table. For
+	 * example:
+	 *
+	 *   URL                           $_SERVER['QUERY_STRING']  Route
+	 *   -------------------------------------------------------------------
+	 *   localhost                     ''                        ''
+	 *   localhost/?                   ''                        ''
+	 *   localhost/?page=1             page=1                    ''
+	 *   localhost/posts?page=1        posts&page=1              posts
+	 *   localhost/posts/index         posts/index               posts/index
+	 *   localhost/posts/index?page=1  posts/index&page=1        posts/index
+	 *
+	 * A URL of the format localhost/?page (one variable name, no value) won't
+	 * work however. (NB. The .htaccess file converts the first ? to a & when
+	 * it's passed through to the $_SERVER variable).
+	 *
+	 * @param $URL
+	 * @return string The URL with the query string variables removed
+	 */
+	protected static function removeQueryStringVariables($URL): string {
+		if ($URL != '') {
+			$parts = explode('&', $URL, 2);
+
+			if (!str_contains($parts[0], '=')) {
+				$URL = $parts[0];
+			} else {
+				$URL = '';
+			}
+		}
+
+		return $URL;
+	}
+
+	/**
+	 * Get the namespace for the controller class. The namespace defined in the
+	 * route parameters is added if present.
+	 *
+	 * @return string The request URL
+	 */
+	protected static function getNamespace(): string {
+		$Namespace = 'App\Controllers\\';
+
+		if (array_key_exists('namespace', static::$Params)) {
+			$Namespace .= static::$Params['namespace'] . '\\';
+		}
+
+		return $Namespace;
+	}
+}
+
+
+/**
+ *
+ * This router should combine the default router with my old one.
+ */
+
+
+/**
+ * Created by PhpStorm.
+ * User: Morten Haugstad <morten.haugstad@gmail.com>
+ * Date: 08.05.2021
+ * Time: 16:57
+ */
+
+namespace application\libraries;
+
+class Router {
+	public $Routes = [];
+	public $Params = [];
+
+	private $Request;
+
+	public function __construct() {
+		$this->Request = new Request();
+	}
+
+	public function Get(string $Route, $Callback) {
+		$this->Routes['get'][$Route] = $Callback;
+	}
+
+	public function Post(string $Route, $Callback = false) {
+		$this->Routes['post'][$Route] = $Callback;
+	}
+
+	public function getRoutes() {
+		return $this->Routes;
+	}
+
+	public function checkRoute() {
+		$URL = $this->Request->splitURL();
+
+		echo $URL['Controller'];
+	}
+
+	/**
+	 * @throws \Exception
+	 */
+	public function Dispatch() {
+		$Method = $this->Request->getMethod();
+		$URL = $this->Request->getURL();
+
+		/**
+		 * Maybe we should do a $this->RouteCheck to see if there is something else, than just the route in the
+		 * routing table.
+		 *
+		 * so for instance if we do $Route->Get('{controller}/{action}')
+		 *
+		 *
+		 * */
+		$Callback = $this->Routes[$Method][$URL] ?? false;
+
+
+		if (!$Callback) {
+			// Should display an exception here
+			throw new \Exception("No callback found $Callback");
+		}
+
+		/**
+		 * Render the view using the callback
+		 * */
+		if (is_string($Callback)) {
+			echo "Callback is string";
+		}
+
+		/**
+		 * Build the controller and the action
+		 * */
+		if (is_array($Callback)) {
+			echo "Callback is array";
+		}
+
+		if (is_callable($Callback)) {
+			call_user_func($Callback);
+		}
+
+
+	}
+}
+
+
+class Request {
+	public $URL_Controller = null;
+	public $URL_Action = null;
+	public $URL_Param1 = null;
+	public $URL_Param2 = null;
+	public $URL_Param3 = null;
+
+	public function getMethod(): string {
+		return strtolower($_SERVER['REQUEST_METHOD']);
+	}
+
+	public function getURL() {
+		return $_SERVER['REQUEST_URI'];
+	}
+
+	public function splitURL(): array {
+		$URL = $this->getURL();
+		$URL = rtrim($URL, '/');
+		$URL = filter_var($URL, FILTER_SANITIZE_URL);
+		$URL = explode('/', $URL);
+
+		array_shift($URL);
+
+		$State = array(
+			"Controller" => ($URL[0] ?? null),
+			"Action" => ($URL[1] ?? null),
+			"Param1" => ($URL[2] ?? null),
+			"Param2" => ($URL[3] ?? null),
+			"Param3" => ($URL[4] ?? null)
+		);
+
+		if ($State['Controller'])
+
+			return $State;
+	}
+}

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Routes;
+namespace App\Route;
 
-use Core\Forge\Route\Router;
+use Core\Forge\Routers\Router;
 
 $Router = new Router();
 /***************************************************************************************
