@@ -183,7 +183,7 @@ class Router {
 	}
 
 	/**
-	 * Get the namespace for the controller class. The namespace defined in the
+	 * Get the namespace for the controller class.
 	 * route parameters is added if present.
 	 *
 	 * @return string The request URL

@@ -42,8 +42,8 @@ class Heimdall {
 		static::$Routes['post'][$Route] = $Callback;
 	}
 
-	public static function getRoutes(): void {
-		var_dump(static::$Routes);
+	public static function getRoutes(): array {
+		return static::$Routes;
 	}
 
 	public static function match(string $URL, string $Method): bool {
@@ -67,33 +67,12 @@ class Heimdall {
 		return false;
 	}
 
-	public static function getParams() : void {
-		var_dump(static::$Params);
+	public static function getParams() : array {
+		return static::$Params;
 	}
+
 	public static function getRequestMethod(): string {
 		return strtolower($_SERVER['REQUEST_METHOD']);
-	}
-
-	protected static function matchRoute($URL, $Method) {
-			// Iterate over the route as Route and its params
-			foreach (static::$Routes[$Method] as $Route => $Params) {
-				// If we have a route for the URL store it in matches
-				if (preg_match($Route, $URL, $Matches)) {
-					// Get named capture group values
-					foreach ($Matches as $Key => $Match) {
-						if (is_string($Key)) {
-							$Params[$Key] = $Match;
-						}
-					}
-
-					// Set the params and return true
-					static::$Params = $Params;
-					return true;
-				}
-			}
-			// Return false if no route is matched
-			return false;
-
 	}
 
 	/**
@@ -103,7 +82,6 @@ class Heimdall {
 		$URL = static::removeQueryStringVariables($URL);
 		$Method = static::getRequestMethod();
 
-		// This action is performed whenever we need to match a route with action GET
 		if (static::match($URL, 'get') && $Method === "get") {
 			if (is_object(static::$Params)) {
 				if (is_callable(static::$Params)) {
@@ -130,8 +108,6 @@ class Heimdall {
 					throw new \Exception("Controller class $Controller not found");
 				}
 			}
-		} elseif (static::match($URL, 'post') && $Method === "post") {
-			// Code for Post
 		} else {
 			throw new \Exception('No route matched.', 404);
 		}
@@ -196,7 +172,7 @@ class Heimdall {
 	}
 
 	/**
-	 * Get the namespace for the controller class. The namespace defined in the
+	 * Get the namespace for the controller class.
 	 * route parameters is added if present.
 	 *
 	 * @return string The request URL
@@ -209,132 +185,5 @@ class Heimdall {
 		}
 
 		return $Namespace;
-	}
-}
-
-
-/**
- *
- * This router should combine the default router with my old one.
- */
-
-
-/**
- * Created by PhpStorm.
- * User: Morten Haugstad <morten.haugstad@gmail.com>
- * Date: 08.05.2021
- * Time: 16:57
- */
-
-namespace application\libraries;
-
-class Router {
-	public $Routes = [];
-	public $Params = [];
-
-	private $Request;
-
-	public function __construct() {
-		$this->Request = new Request();
-	}
-
-	public function Get(string $Route, $Callback) {
-		$this->Routes['get'][$Route] = $Callback;
-	}
-
-	public function Post(string $Route, $Callback = false) {
-		$this->Routes['post'][$Route] = $Callback;
-	}
-
-	public function getRoutes() {
-		return $this->Routes;
-	}
-
-	public function checkRoute() {
-		$URL = $this->Request->splitURL();
-
-		echo $URL['Controller'];
-	}
-
-	/**
-	 * @throws \Exception
-	 */
-	public function Dispatch() {
-		$Method = $this->Request->getMethod();
-		$URL = $this->Request->getURL();
-
-		/**
-		 * Maybe we should do a $this->RouteCheck to see if there is something else, than just the route in the
-		 * routing table.
-		 *
-		 * so for instance if we do $Route->Get('{controller}/{action}')
-		 *
-		 *
-		 * */
-		$Callback = $this->Routes[$Method][$URL] ?? false;
-
-
-		if (!$Callback) {
-			// Should display an exception here
-			throw new \Exception("No callback found $Callback");
-		}
-
-		/**
-		 * Render the view using the callback
-		 * */
-		if (is_string($Callback)) {
-			echo "Callback is string";
-		}
-
-		/**
-		 * Build the controller and the action
-		 * */
-		if (is_array($Callback)) {
-			echo "Callback is array";
-		}
-
-		if (is_callable($Callback)) {
-			call_user_func($Callback);
-		}
-
-
-	}
-}
-
-
-class Request {
-	public $URL_Controller = null;
-	public $URL_Action = null;
-	public $URL_Param1 = null;
-	public $URL_Param2 = null;
-	public $URL_Param3 = null;
-
-	public function getMethod(): string {
-		return strtolower($_SERVER['REQUEST_METHOD']);
-	}
-
-	public function getURL() {
-		return $_SERVER['REQUEST_URI'];
-	}
-
-	public function splitURL(): array {
-		$URL = $this->getURL();
-		$URL = rtrim($URL, '/');
-		$URL = filter_var($URL, FILTER_SANITIZE_URL);
-		$URL = explode('/', $URL);
-
-		array_shift($URL);
-
-		$State = array(
-			"Controller" => ($URL[0] ?? null),
-			"Action" => ($URL[1] ?? null),
-			"Param1" => ($URL[2] ?? null),
-			"Param2" => ($URL[3] ?? null),
-			"Param3" => ($URL[4] ?? null)
-		);
-
-		if ($State['Controller'])
-
-			return $State;
 	}
 }

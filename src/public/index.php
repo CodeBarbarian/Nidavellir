@@ -25,11 +25,20 @@ try {
 }
 */
 
-Heimdall::get('', ['controller' => "Home", 'action' => 'index']);
+Heimdall::get('/', ['controller' => "Home", 'action' => 'index']);
 Heimdall::post('', ['controller' => "Home", 'action' => 'index']);
-
-Heimdall::get('test', function(){
+Heimdall::add('/home/test', ['controller' => "Home", 'action' => 'index']);
+Heimdall::get('test/index/[\d]', function(){
 	echo "This works also very well!";
+});
+
+Heimdall::get('test/lol/[\d]', function(){
+	if (str_contains($_SERVER['QUERY_STRING'], '1')) {
+		echo "FUCK YES!";
+	} else {
+		echo "Nope";
+	}
+
 });
 
 //Heimdall::getRoutes();
