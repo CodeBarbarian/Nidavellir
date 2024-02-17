@@ -8,6 +8,7 @@
 
 use App\Application;
 use Core\Forge\Routers\Heimdall;
+
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 error_reporting(E_ALL);
@@ -24,8 +25,9 @@ try {
 	die('Unable to load the application');
 }
 */
+
 Heimdall::get('{controller}/{action}');
-Heimdall::get('/', ['controller' => "Home", 'action' => 'index']);
+Heimdall::get('', ['controller' => "Home", 'action' => 'index']);
 Heimdall::get('/', ['controller' => "Home", 'action' => 'index']);
 
 Heimdall::get('status', function(){
@@ -35,6 +37,4 @@ Heimdall::get('status', function(){
 
 	echo json_encode($Response);
 });
-
-//Heimdall::getRoutes();
 Heimdall::dispatch($_SERVER['QUERY_STRING']);

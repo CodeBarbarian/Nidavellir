@@ -2,21 +2,10 @@
 
 namespace App\Route;
 
-use Core\Forge\Routers\Router;
+use Core\Forge\Routers\Heimdall;
 
-$Router = new Router();
-/***************************************************************************************
- * Routing Table - Begin
- ***************************************************************************************/
-// Standard Routing
-$Router->add('', ['controller' => 'Home', 'action' => 'index']);
-$Router->add('/', ['controller' => 'Home', 'action' => 'index']);
 
-// Default Route
-$Router->add('{controller}/{action}');
+//Heimdall::getRoutes();
 /***************************************************************************************
  * Routing Table - End
  ***************************************************************************************/
-
-// Router Dispatch
-$Router->dispatch($_SERVER['QUERY_STRING']);

@@ -3,6 +3,7 @@
 namespace App;
 
 use \App\Routes\Routes;
+use Core\Forge\Routers\Heimdall;
 
 class Application {
 	/**
@@ -15,6 +16,7 @@ class Application {
 		session_start();
 
 		// Invoke the router
-		require_once 'Routes/Routes.php';
+		include 'Routes\Routes.php';
+
 	}
 }
