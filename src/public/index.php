@@ -24,20 +24,16 @@ try {
 	die('Unable to load the application');
 }
 */
-
+Heimdall::get('{controller}/{action}');
 Heimdall::get('/', ['controller' => "Home", 'action' => 'index']);
-Heimdall::get('', ['controller' => "Home", 'action' => 'index']);
-Heimdall::get('test/index/[\d]', function(){
-	echo "This works also very well!";
-});
+Heimdall::get('/', ['controller' => "Home", 'action' => 'index']);
 
-Heimdall::get('test/lol/[\d]', function(){
-	if (str_contains($_SERVER['QUERY_STRING'], '1')) {
-		echo "FUCK YES!";
-	} else {
-		echo "Nope";
-	}
+Heimdall::get('status', function(){
+	header( 'Content-Type: application/json' );
+	http_response_code(200);
+	$Response = array("OK");
 
+	echo json_encode($Response);
 });
 
 //Heimdall::getRoutes();
