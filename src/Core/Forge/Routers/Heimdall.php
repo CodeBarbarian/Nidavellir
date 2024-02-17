@@ -25,11 +25,6 @@ class Heimdall {
 		return $Route;
 	}
 
-	public static function add(string $Route, $Callback = false) : void {
-		$PreparedRoute = static::prepareRoute($Route);
-		static::$Routes[$PreparedRoute] = $Callback;
-	}
-
 	public static function get(string $Route, $Callback = false): void {
 		$PreparedRoute = static::prepareRoute($Route);
 

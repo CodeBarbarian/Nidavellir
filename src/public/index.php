@@ -26,8 +26,7 @@ try {
 */
 
 Heimdall::get('/', ['controller' => "Home", 'action' => 'index']);
-Heimdall::post('', ['controller' => "Home", 'action' => 'index']);
-Heimdall::add('/home/test', ['controller' => "Home", 'action' => 'index']);
+Heimdall::get('', ['controller' => "Home", 'action' => 'index']);
 Heimdall::get('test/index/[\d]', function(){
 	echo "This works also very well!";
 });
