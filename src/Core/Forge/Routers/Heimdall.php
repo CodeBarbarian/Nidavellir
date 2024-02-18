@@ -25,13 +25,19 @@ class Heimdall {
 		return $Route;
 	}
 
-	public static function get(string $Route, $Callback = false): void {
+	/**
+	 *
+	 *
+	 * @param string      $Route
+	 * @param false|array $Callback
+	 * @return void
+	 */
+	public static function get(string $Route, false|array|object $Callback = []): void {
 		$PreparedRoute = static::prepareRoute($Route);
 
 		static::$Routes['get'][$PreparedRoute] = $Callback;
 	}
-
-	public static function post(string $Route, array $Callback = []): void {
+	public static function post(string $Route, false|array|object $Callback = []): void {
 		$PreparedRoute = static::prepareRoute($Route);
 
 		static::$Routes['post'][$Route] = $Callback;
@@ -54,6 +60,7 @@ class Heimdall {
 				}
 
 				// Set the params and return true
+
 				static::$Params = $Params;
 				return true;
 			}

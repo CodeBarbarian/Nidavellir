@@ -2,7 +2,7 @@
 
 namespace App;
 
-use \App\Routes\Routes;
+use Core\Forge\Middleware\Loaders\Route;
 use Core\Forge\Routers\Heimdall;
 
 class Application {
@@ -11,12 +11,14 @@ class Application {
 	 *
 	 * @throws \Exception
 	 */
-	public static function init(): void {
+	public static function Run(): void {
 		// Start the session
 		session_start();
 
-		// Invoke the router
-		include 'Routes\Routes.php';
+		// Load all the routes
+		Route::routesLoader('../App/Routes');
 
+		// Dispatch the router using query_string
+		Heimdall::dispatch($_SERVER['QUERY_STRING']);
 	}
 }
