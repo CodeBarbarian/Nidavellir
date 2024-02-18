@@ -6,6 +6,8 @@ use Core\Forge\Template\TinyTemplate\TinyTemplateConfig;
 
 /**
  * TinyTemplate Engine
+ *
+ * @TODO REdo static structure of this template
  */
 class TinyTemplate
 {
@@ -167,6 +169,7 @@ class TinyTemplate
 		$File = self::$ViewDirectory . $File;
 
 		// If we have caching enabled, use the previous files, if not generate new ones.
+		// @TODO Statement needs fixing
 		if (!TinyTemplateConfig::CACHE_ENABLED || !file_exists($CachedFile) || filemtime($CachedFile) < filemtime($CachedFile)) {
 			$Code = self::IncludeFiles($File);
 			$Code = self::CompileCode($Code);

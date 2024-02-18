@@ -3,6 +3,8 @@
 namespace Core\Forge\Template\TinyTemplate;
 
 /**
+ * @TODO FIX THIS CONFIG! Move it to a better place. Maybe think about removing this?
+ *
  * TinyTemplate Plugin Configuration
  * @version: PHP: 8.1
  *
