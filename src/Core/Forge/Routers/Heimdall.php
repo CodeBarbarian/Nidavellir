@@ -9,6 +9,12 @@ class Heimdall {
 	public static $Routes = [];
 	public static $Params = [];
 
+	/**
+	 * Create a regex out of the Route
+	 *
+	 * @param $Route
+	 * @return string
+	 */
 	private static function prepareRoute($Route): string {
 		// Convert the route to a regular expression: escape forward slashes
 		$Route = preg_replace('/\//', '\\/', $Route);
@@ -26,7 +32,7 @@ class Heimdall {
 	}
 
 	/**
-	 *
+	 * Create a $_GET route
 	 *
 	 * @param string      $Route
 	 * @param false|array $Callback
@@ -37,16 +43,36 @@ class Heimdall {
 
 		static::$Routes['get'][$PreparedRoute] = $Callback;
 	}
+
+	/**
+	 * Create a $_POST route
+	 *
+	 * @param string             $Route
+	 * @param false|array|object $Callback
+	 * @return void
+	 */
 	public static function post(string $Route, false|array|object $Callback = []): void {
 		$PreparedRoute = static::prepareRoute($Route);
 
 		static::$Routes['post'][$Route] = $Callback;
 	}
 
+	/**
+	 * Return routes
+	 *
+	 * @return array
+	 */
 	public static function getRoutes(): array {
 		return static::$Routes;
 	}
 
+	/**
+	 * Match the route with the given
+	 *
+	 * @param string $URL
+	 * @param string $Method
+	 * @return bool
+	 */
 	public static function match(string $URL, string $Method): bool {
 		// Iterate over the route as Route and its params
 		foreach (static::$Routes[$Method] as $Route => $Params) {
@@ -69,15 +95,31 @@ class Heimdall {
 		return false;
 	}
 
+	/**
+	 * Return all params
+	 *
+	 * @return array
+	 */
 	public static function getParams() : array {
 		return static::$Params;
 	}
 
+	/**
+	 * Return current request method
+	 *
+	 * @return string
+	 */
 	public static function getRequestMethod(): string {
 		return strtolower($_SERVER['REQUEST_METHOD']);
 	}
 
 	/**
+	 * Routing Handler.
+	 *
+	 * @TODO: Implement $_POST support
+	 *
+	 * @param string $URL
+	 * @return void
 	 * @throws \Exception
 	 */
 	public static function dispatch(string $URL): void {

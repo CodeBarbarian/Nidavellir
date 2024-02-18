@@ -5,8 +5,6 @@ namespace Core\Forge\Middleware\Database;
 use PDO;
 
 abstract class Database extends PDO {
-
-
     protected static function getDB(): ?PDO {
         if (\App\Config\Database::USE_DATABASE){
             static $DB = null;
