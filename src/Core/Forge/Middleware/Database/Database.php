@@ -25,11 +25,11 @@ abstract class Database extends PDO {
                         break;
                     
                     case 'firebird':
-                        # @TODO: Implement system for Firebird DB
+                        // @TODO: Implement system for Firebird DB
                         break;
 
                     case 'ibm':
-                        # @TODO: Implement system for IBM DB
+                        // @TODO: Implement system for IBM DB
                         break;
 
                     case 'informix':
@@ -48,7 +48,7 @@ abstract class Database extends PDO {
                         break;
 
                     case 'odbc':
-                        # @TODO: Implement system for ODBC DB
+						// @TODO: Implement system for ODBC DB
                         break;
                     
                     case 'postgresql':
