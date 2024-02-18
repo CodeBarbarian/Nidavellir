@@ -1,0 +1,15 @@
+<html>
+<head>
+    <title>Home</title>
+</head>
+<body>
+<h1>Home</h1>
+{% if (!empty($flash_message)): %}
+{% foreach($flash_message as $value): %}
+<div class="alert alert-{{ $value['type'] }}">
+    {{ $value['body'] }}
+</div>
+{% endforeach %}
+{% endif %}
+</body>
+</html>

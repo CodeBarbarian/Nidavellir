@@ -49,4 +49,6 @@ Thumbs.db
 *.wmv
 
 # Cache & Logs
-
+src/App/Storage/Cache/*.php
+src/App/Storage/Logs/*.log
+src/App/Storage/tmp/*.tmp
