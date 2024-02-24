@@ -9,41 +9,41 @@ class Database extends Config {
 	/**
 	 * Is database turned on
 	 */
-	const USE_DATABASE = false;
+	const bool USE_DATABASE = false;
 
 	/**
 	 * Database Driver
 	 * @var string
 	 * */
-	const DB_DRIVER = 'mysql';
+	const string DB_DRIVER = 'mysql';
 
     /**
      * Database host
      * @var string
      */
-    const DB_HOST = 'localhost';
+    const string DB_HOST = 'localhost';
     
     /**
      * Database name
      * @var string
      */
-    const DB_NAME = '';
+    const string DB_NAME = '';
     
     /**
      * Database user
      * @var string
      */
-    const DB_USER = '';
+    const string DB_USER = '';
     
     /**
      * Database password
      * @var string
      */
-    const DB_PASSWORD = '';
+    const string DB_PASSWORD = '';
 
     /**
      * Database Filepath for SQLite
      * @var string
      */
-    const DB_FILEPATH = '';
+    const string DB_FILEPATH = '';
 }
