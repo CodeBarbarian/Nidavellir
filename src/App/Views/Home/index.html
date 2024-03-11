@@ -1,15 +1,39 @@
-<html>
-<head>
-    <title>Home</title>
-</head>
-<body>
-<h1>Home</h1>
-{% if (!empty($flash_message)): %}
-{% foreach($flash_message as $value): %}
-<div class="alert alert-{{ $value['type'] }}">
-    {{ $value['body'] }}
+{% extends '_design.html' %}
+
+{% block title %} Home {% endblock %}
+
+{% block body %}
+<!--
+    <h1>Home</h1>
+    {% if (!empty($flash_message)): %}
+    {% foreach($flash_message as $value): %}
+    <div class="alert alert-{{ $value['type'] }}">
+        {{ $value['body'] }}
+    </div>
+    {% endforeach %}
+    {% endif %}
+-->
+<div class="container">
+    <h1>Dashboard</h1>
+    <hr />
+    <div class="container">
+        <h2>Statistics</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th>Description</th>
+                <th>Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Interstellar Credits (ISK)</td>
+                <td>The currency which is used</td>
+                <td>0</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
-{% endforeach %}
-{% endif %}
-</body>
-</html>
+{% endblock %}
