@@ -28,39 +28,6 @@ Heimdall::get('status', function(){
 	echo json_encode($Response);
 });
 
-Heimdall::get('time', function() {
-	header( 'Content-Type: application/json' );
-	http_response_code(200);
-
-	// Start date
-	$StartDate = "2024-03-11";
-
-	$Diff = strtotime($StartDate) - strtotime('now');
-	$Days = abs(round($Diff / 86400));
-
-	/*
-	if ((date('a')) === "pm") {
-		$Ticker = "pm";
-	} else {
-		$Ticker = "am";
-	}
-	*/
-
-	// Simplify above
-	$Ticker = (date("a") === "pm") ? "pm" : "am";
-
-	/**
-	 * Build the response
-	 */
-	$Response = array(
-		"meridiem" => $Ticker,
-		"server_clock" => (date("h:i:s")),
-		"day" => $Days
-	);
-
-	echo json_encode($Response);
-});
-
 /***************************************************************************************
  * Routing Table - End
  ***************************************************************************************/
