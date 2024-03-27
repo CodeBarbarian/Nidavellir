@@ -20,11 +20,15 @@ use Core\Forge\Routers\Heimdall;
  * Routing Table - Start
  ***************************************************************************************/
 
-Heimdall::get('', ['controller' => "Home", 'action' => 'index']);
-Heimdall::get('/', ['controller' => "Home", 'action' => 'index']);
-
 // Default Route
 Heimdall::get('{controller}/{action}');
+
+Heimdall::get('', ['controller' => "Home", 'action' => 'index']);
+Heimdall::get('/', ['controller' => "Home", 'action' => 'index']);
+Heimdall::get('home', ['controller' => "Home", 'action' => 'index']);
+
+
+
 
 /***************************************************************************************
  * Routing Table - End

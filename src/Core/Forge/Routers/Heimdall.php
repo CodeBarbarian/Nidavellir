@@ -231,7 +231,6 @@ class Heimdall {
 
                 if (is_callable([$Controller_Object, $Action])) {
                     $Controller_Object->$Action();
-
                 } else {
                     throw new \Exception("Method $Action (in controller $Controller) not found");
                 }
