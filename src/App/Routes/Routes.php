@@ -11,6 +11,7 @@
  *
  * @Package: Nidavellir
  ***************************************************************************************/
+
 namespace App\Routes;
 
 use Core\Forge\Routers\Heimdall;
@@ -21,6 +22,9 @@ use Core\Forge\Routers\Heimdall;
 
 Heimdall::get('', ['controller' => "Home", 'action' => 'index']);
 Heimdall::get('/', ['controller' => "Home", 'action' => 'index']);
+
+// Default Route
+Heimdall::get('{controller}/{action}');
 
 /***************************************************************************************
  * Routing Table - End
