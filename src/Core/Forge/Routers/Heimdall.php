@@ -54,7 +54,7 @@ class Heimdall {
 	public static function post(string $Route, false|array|object $Callback = []): void {
 		$PreparedRoute = static::prepareRoute($Route);
 
-		static::$Routes['post'][$Route] = $Callback;
+		static::$Routes['post'][$PreparedRoute] = $Callback;
 	}
 
 	/**
@@ -86,7 +86,6 @@ class Heimdall {
 				}
 
 				// Set the params and return true
-
 				static::$Params = $Params;
 				return true;
 			}
@@ -126,37 +125,15 @@ class Heimdall {
 		$URL = static::removeQueryStringVariables($URL);
 		$Method = static::getRequestMethod();
 
+        /**
+         * Allowed methods
+         */
 		if (static::match($URL, 'get') && $Method === "get") {
-			if (is_object(static::$Params)) {
-				if (is_callable(static::$Params)) {
-					call_user_func(static::$Params);
-				}
-			} else {
-				$Controller = static::$Params['controller'];
-				$Controller = static::convertToStudlyCaps($Controller);
-				$Controller = static::getNamespace() . $Controller;
-
-				if (class_exists($Controller)) {
-					$Controller_Object = new $Controller(static::$Params);
-
-					$Action = static::$Params['action'];
-					$Action = static::convertToCamelCase($Action);
-
-					if (is_callable([$Controller_Object, $Action])) {
-						$Controller_Object->$Action();
-
-					} else {
-						throw new \Exception("Method $Action (in controller $Controller) not found");
-					}
-				} else {
-					throw new \Exception("Controller class $Controller not found");
-				}
-			}
-		} else {
-			throw new \Exception('No route matched.', 404);
-		}
-	}
-
+            self::extracted();
+		} elseif (static::match($URL, 'post') && $Method === "post") {
+            self::extracted();
+        }
+    }
 	/**
 	 * Convert the string with hyphens to StudlyCaps,
 	 * e.g. post-authors => PostAuthors
@@ -230,4 +207,37 @@ class Heimdall {
 
 		return $Namespace;
 	}
+
+    /**
+     * @return void
+     * @throws \Exception
+     */
+    public static function extracted(): void
+    {
+        if (is_object(static::$Params)) {
+            if (is_callable(static::$Params)) {
+                call_user_func(static::$Params);
+            }
+        } else {
+            $Controller = static::$Params['controller'];
+            $Controller = static::convertToStudlyCaps($Controller);
+            $Controller = static::getNamespace() . $Controller;
+
+            if (class_exists($Controller)) {
+                $Controller_Object = new $Controller(static::$Params);
+
+                $Action = static::$Params['action'];
+                $Action = static::convertToCamelCase($Action);
+
+                if (is_callable([$Controller_Object, $Action])) {
+                    $Controller_Object->$Action();
+
+                } else {
+                    throw new \Exception("Method $Action (in controller $Controller) not found");
+                }
+            } else {
+                throw new \Exception("Controller class $Controller not found");
+            }
+        }
+    }
 }

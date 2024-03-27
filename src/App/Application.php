@@ -1,22 +1,25 @@
 <?php
-
+/**
+ * @Name: Application
+ * @Version: 1.0
+ * @Description: Used as the entrypoint, and bootstrapper for the application.
+ *
+ * @package: Nidavellir
+ */
 namespace App;
 
 use Core\Forge\Middleware\Loaders\Route;
 use Core\Forge\Routers\Heimdall;
 
 class Application {
-
-
 	/**
-	 * This handles the main control flow of the application loading
-	 *
+	 * Application Run (Main Method)
+     *
 	 * @throws \Exception
 	 */
 	public static function Run(): void {
-
 		// @TODO: Need a bootstrap to set system variables
-		date_default_timezone_set("Europe/Oslo");
+        require_once 'Bootstrap.php';
 
 		// Start the session
 		session_start();

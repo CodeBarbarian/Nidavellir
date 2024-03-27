@@ -9,7 +9,4 @@ class Home extends Controller {
 	public function indexAction() : void {
 		View::renderTemplate('Home/index.html');
 	}
-
-
-
 }
