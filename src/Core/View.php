@@ -58,7 +58,9 @@ class View
 			 */
 			$Tiny->setGlobal("public_root", Paths::SITE_ROOT());
 			$Tiny->setGlobal("flash_message", Message::getMessages());
+
             // Only to be able to manipulate the output if needed
+            // @todo: this needs to be fixed somehow. Must be more elegant!
             $Tiny->setGlobal("framework_version", System::getFrameworkVersion());
 		}
 
