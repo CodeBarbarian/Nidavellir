@@ -2,9 +2,8 @@
 
 namespace Core;
 
-use ErrorException;
 use App\Config\Paths;
-
+use ErrorException;
 /**
  * Error and exception handler
  * @version: PHP: 8.1
@@ -29,13 +28,14 @@ class Error {
 		}
 	}
 
-	/**
-	 * Exception handler.
-	 *
-	 * @param $Exception
-	 *
-	 * @return void
-	 */
+    /**
+     * Exception handler.
+     *
+     * @param $Exception
+     *
+     * @return void
+     * @throws \Exception
+     */
 	public static function exceptionHandler($Exception): void {
 		// Code is 404 (not found) or 500 (general error)
 		$Code = $Exception->getCode();

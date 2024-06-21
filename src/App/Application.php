@@ -15,7 +15,7 @@ class Application {
 	 */
 	public static function Run(): void {
 
-		// @TODO: Need a bootstrap to set system variables
+		// @TODO: Need a bootstrap class or function to set system variables
 		date_default_timezone_set("Europe/Oslo");
 
 		// Start the session
