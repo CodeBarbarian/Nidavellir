@@ -10,6 +10,4 @@ use Core\Forge\Middleware\Database\Database;
  *
  * @Model
  */
-abstract class Model extends Database {
-
-}
+abstract class Model extends Database {}

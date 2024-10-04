@@ -65,6 +65,7 @@ abstract class Controller {
 	 * @return void
 	 */
 	protected function before(): void {
+
 	}
 
 	/**
@@ -73,6 +74,7 @@ abstract class Controller {
 	 * @return void
 	 */
 	protected function after(): void {
+
 	}
 
 	/**
